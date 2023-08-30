@@ -1,0 +1,20 @@
+#Install Hashicorp Vault to K8s Cluster using helm
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo list
+helm repo update
+helm search repo vault --versions
+helm install vault hashicorp/vault --set='ui.enabled=true' --set='ui.serviceType=LoadBalancer'
+You Can access Vault using > LB_IP:8200 > http://192.168.49.5:8200
+
+#Unseal Keys through UI
+Vault start with sealed status so, we need to access UI portal to start nnseal keys and init vault.
+http://192.168.49.5:8200 > Key Shares=5 and Key Threshold=3
+Download keys and start to unseal 3 of them.
+After that you can login using Root Token
+
+#Unseal Keys through CLI
+kubectl exec -it vault-0 /bin/sh
+vault status
+vault operator init > to init vault
+vault operator unseal > Run this one 3 times to unseal keys.
+vault login

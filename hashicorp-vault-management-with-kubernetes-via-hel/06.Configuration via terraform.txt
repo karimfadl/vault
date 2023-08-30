@@ -1,0 +1,7 @@
+#Configuration via terraform
+All terraform files under terraform folder and you can run it through the following commands:
+export VAULT_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxx
+terraform init
+terraform plan
+terraform apply
+>>>> And use URL for example : http://192.168.49.5:8200

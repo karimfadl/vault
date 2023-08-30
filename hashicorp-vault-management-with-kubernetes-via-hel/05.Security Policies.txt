@@ -1,0 +1,52 @@
+#Security Policies
+#Create KV Secret Engine UI
+1. Access Vault Portal > Enable Secret Engine > Select KV > Use Default setting > Enable Engine.
+2. Create Secret > Add Path (users/karim) > Secret Data (name = karim, password=123) > Save.
+
+
+#Create First Policy To View Secret Engine.
+1. Access Vault Portal > Poilicies > Create ACL Policy > create a policy name called "secret_policy" with the following capabilities:
+
+path "kv/metadata/"{
+capabilities = ["list"]
+}
+
+path "kv/metadata/users/"{
+capabilities = ["list"]
+}
+
+2. Attach policy to user.
+Access Vault Portal > Access > userpass/karim > Edit User > Token > Generated Token's Policies > add "secret_policy" > save
+
+Try to login with karim/123 username you can see list kv now.
+
+
+#Create WRITE/DELETE/UPDATE policy for users.
+Update Policy to allow user list/read/update/create/delete kv, also you can add permission to this policy allow user to delete user also.
+
+path "kv/metadata/"{
+capabilities = ["list"]
+}
+
+path "kv/metadata/users/"{
+capabilities = ["list"]
+}
+
+path "kv/data/users/karim"{
+capabilities = ["list" , "read" , "update" , "create" , "delete"]
+}
+
+path "kv/delete/users/karim"{
+capabilities = ["update" , delete"]
+}
+
+
+#Enable,Attach Secret Engine/Policy Via CLI
+$ vault secrets enable --version=2 kv
+$ vault policy write secret_policy ./secret_policy.hcl
+$ vault write auth/userpass/users/vaultdemo password=vault policies=secret_policy
+
+
+#Enable,Attach Secret Engine/Policy Via API
+curl -k --header "X-VAULT-TOKEN: hvs.RiIBJCCE6Gyzezp6zONtNQ2b" --data @secretengine.json http://192.168.49.5:8200/v1/sys/mounts/kv
+

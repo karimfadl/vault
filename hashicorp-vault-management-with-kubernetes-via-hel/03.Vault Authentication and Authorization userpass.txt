@@ -1,0 +1,50 @@
+#Vault Authentication and Authorization userpass
+in This Session we will use Userpass method for Authentication and Authorization.
+
+#Enable Userpass Authentication and Authorization With UI
+Access Vault Portal > Access > Authentication methods > Enable new method > Select Username & Password > Enable Method.
+To Create a Username and Password for user you can access "userpass/" and create it.
+
+
+#Enable Userpass Authentication and Authorization With CLI
+kubectl exec -it vault-0 /bin/sh
+$ vault login
+$ vault auth enable userpass
+$ vault write auth/userpass/users/ali password=ali
+
+
+#Create Auth method/users via CLI with For Loop
+kubectl exec -it vault-0 /bin/sh
+$ for i in karim ali; do vault write auth/userpass/users/$i password=$i; done
+Success! Data written to: auth/userpass/users/karim
+Success! Data written to: auth/userpass/users/ali
+
+
+#Enable Userpass Authentication and Authorization With CLI
+1.Enable userpass via API
+curl -k --header "X-VAULT-TOKEN: hvs.RiIBJCCE6Gyzezp6zONtNQ2b" --request POST --data '{"type": "userpass"}' http://192.168.49.5:8200/v1/sys/auth/userpass
+
+2.Create a json file and password on it.
+payload.json >
+{"password": "api"}
+
+3.Run Curl Command:
+curl -k -H "X-VAULT-TOKEN: hvs.RiIBJCCE6Gyzezp6zONtNQ2b" -X POST --data @payload.json http://192.168.49.5:8200/v1/auth/userpass/users/api
+
+4.Get User Info
+curl -k -H "X-VAULT-TOKEN: hvs.RiIBJCCE6Gyzezp6zONtNQ2b" http://192.168.49.5:8200/v1/auth/userpass/users/api
+
+
+#Create Auth method/users via API with For Loop
+for i in mohamed layla; do curl -k --header "X-VAULT-TOKEN: hvs.RiIBJCCE6Gyzezp6zONtNQ2b" --request POST --data '{"password": "'"$i"'"}' http://192.168.49.5:8200/v1/auth/userpass/users/$i; done
+
+
+#Vault Login with CLI and API
+#For CLI
+$ vault login -method=userpass username=karim
+
+#For API
+$ curl -k --header "X-VAULT-TOKEN: hvs.RiIBJCCE6Gyzezp6zONtNQ2b" --request POST --data @payload.json http://192.168.49.5:8200/v1/auth/userpass/login/api
+
+#To List all users
+$ curl -k --header "X-VAULT-TOKEN: hvs.RiIBJCCE6Gyzezp6zONtNQ2b" --request LIST http://192.168.49.5:8200/v1/auth/userpass/users

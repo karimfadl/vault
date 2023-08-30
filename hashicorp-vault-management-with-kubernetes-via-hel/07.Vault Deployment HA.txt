@@ -1,0 +1,15 @@
+#Vault Deployment HA
+#The Following steps to Deploy HA Vault in 3 nodes.
+helm repo add hashicorp https://helm.releases.hashicorp.com
+helm repo list
+helm repo update
+helm search repo vault --versions
+helm install vault hashicorp/vault --set='ui.enabled=true' --set='ui.serviceType=LoadBalancer' -f ha-vault-values.yaml
+
+#Unseal Keys in Vault-0/1/2 nodes
+kubectl exec -it vault-0 /bin/sh
+vault status
+vault operator init
+vault operator unseal
+
+Ref: https://stackoverflow.com/questions/66766180/hashicorp-vault-pods-with-pending-status

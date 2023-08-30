@@ -1,0 +1,32 @@
+#Enable GitHub Authentication
+1.Enable GitHub Authentication and Authorization With UI
+Access Vault Portal > Access > Authentication methods > Enable new method > Select GitHub > Enable Method.
+
+2.Enable Userpass Authentication and Authorization With CLI
+kubectl exec -it vault-0 /bin/sh
+$ vault login
+$ vault auth enable github
+
+3.Enable Github via API
+curl -k --header "X-VAULT-TOKEN: hvs.RiIBJCCE6Gyzezp6zONtNQ2b" --request POST --data '{"type": "github"}' http://192.168.49.5:8200/v1/sys/auth/github
+
+
+#Configure Github Org ID and Login
+1.Create a GitHub Org and Github Token through Github UI.
+I created a new one called "vault-cli" and added me "karimfadl" as member
+Also created a token for my account "karimfadl" with "admin:org" read permission
+
+2.Get Github Org ID through CURL Command.
+curl -H "Authorization: token xxxxxxxxxxxxxxxxxxxxxxxxxx" https://api.github.com/orgs/vault-cli 
+{
+  "login": "vault-cli",
+  "id": 143210883,
+
+3.Integrate GitHub Org with Vault
+Access Vault Portal > Access > Authentication methods > Select GitHub > Configure > Add Org=vault-cli and Org-ID=143210883.
+
+After that you should able to login with Github token
+
+
+#Create Github Vault auth via CURL
+curl -k --header "X-VAULT-TOKEN: hvs.RiIBJCCE6Gyzezp6zONtNQ2b" --data @githubpayload.json http://192.168.49.5:8200/v1/auth/github/config
